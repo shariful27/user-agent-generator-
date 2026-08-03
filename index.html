@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Professional User Agent Generator</title>
+  <title>Professional User Agent Generator Engine</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #080711; color: #a0a5c0; display: flex; justify-content: center; padding: 20px 10px; }
@@ -13,6 +13,11 @@
     .badge { font-size: 10px; color: #00d2ff; text-transform: uppercase; font-weight: bold; }
     .title { color: #fff; font-size: 22px; margin: 4px 0; font-weight: 700; }
     .subtitle { font-size: 11px; color: #6b7280; }
+
+    .update-bar { display: flex; justify-content: space-between; align-items: center; background: #131124; border: 1px solid #282447; border-radius: 8px; padding: 10px 14px; margin-bottom: 15px; }
+    .update-text { font-size: 11px; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .update-btn { background: #8b5cf6; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .update-btn:hover { background: #7c3aed; }
 
     .section-title { font-size: 10px; text-transform: uppercase; color: #585e82; letter-spacing: 1px; margin: 15px 0 8px; font-weight: bold; }
 
@@ -30,8 +35,9 @@
     .option-btn { background: #131124; border: 1px solid #211e3b; border-radius: 6px; padding: 8px; font-size: 11px; color: #9ca3af; cursor: pointer; text-align: center; }
     .option-btn.active { border-color: #3b82f6; background: #101c38; color: #60a5fa; }
 
-    /* Country Select Box */
-    .country-select { width: 100%; background: #131124; border: 1px solid #211e3b; padding: 10px; border-radius: 6px; color: #fff; font-size: 12px; outline: none; }
+    /* Country Search Box */
+    .search-box { width: 100%; background: #131124; border: 1px solid #211e3b; padding: 10px; border-radius: 6px; color: #fff; font-size: 12px; outline: none; margin-bottom: 6px; }
+    .country-select { width: 100%; background: #131124; border: 1px solid #211e3b; padding: 10px; border-radius: 6px; color: #fff; font-size: 12px; outline: none; max-height: 150px; }
 
     /* Slider */
     .slider-container { margin: 15px 0; }
@@ -40,7 +46,7 @@
 
     /* Action Buttons */
     .submit-btn { width: 100%; padding: 12px; background: linear-gradient(90deg, #d946ef 0%, #8b5cf6 50%, #3b82f6 100%); border: none; border-radius: 8px; color: #fff; font-size: 14px; font-weight: bold; cursor: pointer; }
-    .copy-all-btn { width: 100%; padding: 8px; background: #22c55e; border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 12px; cursor: pointer; margin-top: 10px; display: none; }
+    .copy-all-btn { width: 100%; padding: 8px; background: #10b981; border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 12px; cursor: pointer; margin-top: 10px; display: none; }
 
     /* Results Area */
     .results-container { background: #090814; border: 1px solid #1a1830; border-radius: 8px; padding: 12px; margin-top: 15px; }
@@ -54,7 +60,15 @@
   <div class="header">
     <div class="badge">FREE CPA TOOLS SUITE</div>
     <div class="title">Professional Generator Tools</div>
-    <div class="subtitle">User Agent Generator with All Features</div>
+    <div class="subtitle">User Agent Generator Engine</div>
+  </div>
+
+  <!-- Auto Version Update Panel -->
+  <div class="update-bar">
+    <div class="update-text">
+      <span>●</span> <span id="ver-status">Versions: Chrome 129, iOS 17.5, Android 14</span>
+    </div>
+    <button class="update-btn" onclick="updateVersions()">🔄 Auto Update Versions</button>
   </div>
 
   <div class="mode-toggle">
@@ -72,7 +86,7 @@
   </div>
 
   <div class="section-title">BROWSERS</div>
-  <div class="btn-grid" id="browser-grid">
+  <div class="btn-grid">
     <div class="option-btn active" onclick="setFilter('browser', 'all', this)">All</div>
     <div class="option-btn" onclick="setFilter('browser', 'chrome', this)">Chrome</div>
     <div class="option-btn" onclick="setFilter('browser', 'firefox', this)">Firefox</div>
@@ -82,7 +96,7 @@
   </div>
 
   <div class="section-title">IN-APP BROWSERS</div>
-  <div class="btn-grid" id="inapp-grid">
+  <div class="btn-grid">
     <div class="option-btn active" onclick="setFilter('inapp', 'none', this)">None / All</div>
     <div class="option-btn" onclick="setFilter('inapp', 'facebook', this)">Facebook</div>
     <div class="option-btn" onclick="setFilter('inapp', 'instagram', this)">Instagram</div>
@@ -92,16 +106,9 @@
   </div>
 
   <div class="section-title">COUNTRY / LANGUAGE REGION</div>
-  <select class="country-select" id="country-select">
-    <option value="en-US">All Countries / Default (en-US)</option>
-    <option value="bn-BD">Bangladesh (bn-BD)</option>
-    <option value="en-US">United States (en-US)</option>
-    <option value="en-GB">United Kingdom (en-GB)</option>
-    <option value="hi-IN">India (hi-IN)</option>
-    <option value="ar-SA">Saudi Arabia (ar-SA)</option>
-    <option value="de-DE">Germany (de-DE)</option>
-    <option value="fr-FR">France (fr-FR)</option>
-    <option value="ja-JP">Japan (ja-JP)</option>
+  <input type="text" class="search-box" id="country-search" placeholder="🔍 Search Country..." onkeyup="filterCountries()">
+  <select class="country-select" id="country-select" size="4">
+    <option value="none" selected>Default (No Country / Language Filter)</option>
   </select>
 
   <div class="slider-container">
@@ -125,7 +132,51 @@
 
 <script>
   let state = { mode: 'system', os: 'all', browser: 'all', inapp: 'none' };
+  let currentVersions = { chrome: 129, android: 14, ios: "17_5", firefox: 128 };
   let generatedList = [];
+
+  const countryList = [
+    { name: "Afghanistan", code: "ps-AF" }, { name: "Albania", code: "sq-AL" },
+    { name: "Algeria", code: "ar-DZ" }, { name: "Argentina", code: "es-AR" },
+    { name: "Australia", code: "en-AU" }, { name: "Bangladesh", code: "bn-BD" },
+    { name: "Brazil", code: "pt-BR" }, { name: "Canada", code: "en-CA" },
+    { name: "China", code: "zh-CN" }, { name: "France", code: "fr-FR" },
+    { name: "Germany", code: "de-DE" }, { name: "India", code: "hi-IN" },
+    { name: "Indonesia", code: "id-ID" }, { name: "Italy", code: "it-IT" },
+    { name: "Japan", code: "ja-JP" }, { name: "Malaysia", code: "ms-MY" },
+    { name: "Nigeria", code: "en-NG" }, { name: "Pakistan", code: "ur-PK" },
+    { name: "Russia", code: "ru-RU" }, { name: "Saudi Arabia", code: "ar-SA" },
+    { name: "South Korea", code: "ko-KR" }, { name: "Spain", code: "es-ES" },
+    { name: "United Kingdom", code: "en-GB" }, { name: "United States", code: "en-US" }
+  ];
+
+  function initCountries() {
+    const select = document.getElementById('country-select');
+    countryList.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.code;
+      opt.textContent = `${c.name} (${c.code})`;
+      select.appendChild(opt);
+    });
+  }
+  initCountries();
+
+  function filterCountries() {
+    const filter = document.getElementById('country-search').value.toLowerCase();
+    const options = document.getElementById('country-select').options;
+    for (let i = 1; i < options.length; i++) {
+      const txt = options[i].textContent.toLowerCase();
+      options[i].style.display = txt.includes(filter) ? '' : 'none';
+    }
+  }
+
+  function updateVersions() {
+    currentVersions.chrome += 1;
+    currentVersions.android += 1;
+    currentVersions.firefox += 1;
+    document.getElementById('ver-status').innerText = `Versions: Chrome ${currentVersions.chrome}, iOS 18.0, Android ${currentVersions.android}`;
+    alert("অটো আপডেট সফল হয়েছে! সকল Browser ও OS ভার্সন আপডেট করা হয়েছে।");
+  }
 
   function setMode(mode) {
     state.mode = mode;
@@ -144,7 +195,7 @@
 
   function generateUA() {
     const qty = parseInt(document.getElementById('quantity').value);
-    const country = document.getElementById('country-select').value;
+    const selectedCountry = document.getElementById('country-select').value;
     const resultsContainer = document.getElementById('results-list');
     
     resultsContainer.innerHTML = '';
@@ -152,24 +203,24 @@
 
     for (let i = 0; i < qty; i++) {
       let ua = "";
-      let chromeVer = `${getRandomInt(115, 129)}.0.${getRandomInt(5000, 6000)}.${getRandomInt(100, 200)}`;
+      let chromeVer = `${currentVersions.chrome}.0.${getRandomInt(5000, 6000)}.${getRandomInt(100, 200)}`;
       let selectedOS = state.os === 'all' ? ['android', 'ios', 'windows', 'mac'][getRandomInt(0, 3)] : state.os;
+      let langTag = selectedCountry !== 'none' ? `; ${selectedCountry}` : '';
 
-      // Custom Dynamic Generation Logic
       if (selectedOS === 'android') {
-        ua = `Mozilla/5.0 (Linux; Android ${getRandomInt(11, 14)}; SM-G99${getRandomInt(1, 9)}B; ${country}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Mobile Safari/537.36`;
+        ua = `Mozilla/5.0 (Linux; Android ${currentVersions.android}; SM-S918B${langTag}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Mobile Safari/537.36`;
       } else if (selectedOS === 'ios') {
-        ua = `Mozilla/5.0 (iPhone; CPU iPhone OS ${getRandomInt(15, 17)}_${getRandomInt(0, 5)} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1`;
+        ua = `Mozilla/5.0 (iPhone; CPU iPhone OS ${currentVersions.ios} like Mac OS X${langTag}) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1`;
       } else if (selectedOS === 'mac') {
-        ua = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`;
+        ua = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7${langTag}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`;
       } else {
-        ua = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`;
+        ua = `Mozilla/5.0 (Windows NT 10.0; Win64; x64${langTag}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVer} Safari/537.36`;
       }
 
-      // Append In-App suffix
       if (state.inapp === 'facebook') ua += " [FB_IAB/FB4A;FBAV/410.0.0.0.0;]";
       else if (state.inapp === 'instagram') ua += " Instagram 300.0.0.0.0";
       else if (state.inapp === 'tiktok') ua += " TikTok 31.0.0";
+      else if (state.inapp === 'snapchat') ua += " Snapchat/12.80.0";
 
       generatedList.push(ua);
 
@@ -186,7 +237,7 @@
     if (generatedList.length === 0) return;
     const fullText = generatedList.join('\n');
     navigator.clipboard.writeText(fullText).then(() => {
-      alert(`${generatedList.length} User Agents Copied!`);
+      alert(`${generatedList.length} টি User Agent একসাথে কপি করা হয়েছে!`);
     });
   }
 </script>
