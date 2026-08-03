@@ -1,97 +1,190 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Agent Generator</title>
+  <title>Professional Generator Tools - User Agent Engine</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background-color: #0b0c10;
-      color: #c5c6c7;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .card {
-      background-color: #1f2833;
-      padding: 25px;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 4px 15px rgba(0, 255, 204, 0.2);
-      border: 1px solid #45a29e;
-    }
-    h2 {
-      text-align: center;
-      color: #66fcf1;
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    select, input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 6px;
-      border: 1px solid #45a29e;
-      background: #0b0c10;
-      color: #fff;
-    }
-    button {
-      margin-top: 20px;
-      background-color: #45a29e;
-      color: #0b0c10;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background-color: #66fcf1;
-    }
-    .result-box {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #0b0c10;
-      border-radius: 6px;
-      word-break: break-all;
-      border: 1px dashed #66fcf1;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #080711; color: #a0a5c0; display: flex; justify-content: center; padding: 20px 10px; }
+    .container { width: 100%; max-width: 650px; background: #0e0d1d; border-radius: 16px; border: 1px solid #1f1d38; padding: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+    
+    .header { text-align: center; margin-bottom: 25px; }
+    .badge { font-size: 10px; color: #00d2ff; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+    .title { color: #ffffff; font-size: 22px; margin: 5px 0; font-weight: 700; }
+    .subtitle { font-size: 11px; color: #6b7280; }
+
+    .banner { background: linear-gradient(180deg, #181530 0%, #0d0b1c 100%); border-radius: 12px; padding: 15px; border: 1px solid #282447; text-align: center; margin-bottom: 20px; }
+    .banner img { width: 100%; max-width: 320px; border-radius: 8px; margin-bottom: 10px; }
+    .banner-text { font-size: 12px; color: #43b5f4; font-weight: 600; }
+
+    .section-title { font-size: 10px; text-transform: uppercase; color: #585e82; letter-spacing: 1px; margin-bottom: 10px; font-weight: bold; }
+
+    /* Mode Switch */
+    .mode-toggle { display: flex; background: #151329; border-radius: 8px; padding: 4px; margin-bottom: 20px; }
+    .mode-btn { flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; color: #787d9c; }
+    .mode-btn.active { background: #2f1d58; color: #a855f7; border: 1px solid #6b21a8; }
+
+    /* Grid Layouts */
+    .device-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .device-card { background: #131124; border: 1px solid #211e3b; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; transition: 0.2s; }
+    .device-card.active, .device-card:hover { border-color: #8b5cf6; background: #1a1538; }
+    .device-icon { width: 32px; height: 32px; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .device-name { font-size: 11px; font-weight: bold; color: #d1d5db; }
+
+    .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+    .option-btn { background: #131124; border: 1px solid #211e3b; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #9ca3af; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .option-btn.active { border-color: #3b82f6; background: #101c38; color: #60a5fa; }
+
+    /* Country & Slider */
+    .search-input { width: 100%; background: #131124; border: 1px solid #211e3b; padding: 10px 12px; border-radius: 6px; color: #fff; font-size: 12px; margin-bottom: 10px; outline: none; }
+    
+    .slider-container { margin: 20px 0; }
+    .slider-header { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 8px; }
+    .slider { width: 100%; accent-color: #ec4899; cursor: pointer; }
+
+    /* Submit Button */
+    .submit-btn { width: 100%; padding: 14px; background: linear-gradient(90deg, #d946ef 0%, #8b5cf6 50%, #3b82f6 100%); border: none; border-radius: 10px; color: #fff; font-size: 14px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
+
+    /* Results Area */
+    .results-container { background: #090814; border: 1px solid #1a1830; border-radius: 10px; padding: 15px; }
+    .result-item { background: #131124; border: 1px solid #211e3b; border-radius: 6px; padding: 10px; margin-bottom: 8px; font-family: monospace; font-size: 11px; color: #a7f3d0; word-break: break-all; position: relative; }
+    .copy-btn { position: absolute; right: 8px; top: 8px; background: #211e3b; color: #fff; border: none; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
   </style>
 </head>
 <body>
 
-<div class="card">
-  <h2>User Agent Generator</h2>
+<div class="container">
+  <div class="header">
+    <div class="badge">FREE CPA TOOLS SUITE</div>
+    <div class="title">Professional Generator Tools</div>
+    <div class="subtitle">Phone numbers, user agents, QR codes and free Gmail tools — all in one place.</div>
+  </div>
 
-  <label>OS / Device:</label>
-  <select id="os">
-    <option value="android">Android</option>
-    <option value="ios">iOS (iPhone)</option>
-    <option value="windows">Windows</option>
-  </select>
+  <div class="banner">
+    <div class="banner-text">⚙️ USER AGENT ENGINE</div>
+    <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">Generate browser user agent strings filtered by browser, OS, and app.</div>
+  </div>
 
-  <label>Browser:</label>
-  <select id="browser">
-    <option value="chrome">Chrome</option>
-    <option value="firefox">Firefox</option>
-    <option value="safari">Safari</option>
-  </select>
+  <div class="mode-toggle">
+    <div class="mode-btn active">System Database</div>
+    <div class="mode-btn">Custom Generated</div>
+  </div>
 
-  <button onclick="generateUA()">Generate User Agent</button>
+  <div class="section-title">DEVICE / OS</div>
+  <div class="device-grid">
+    <div class="device-card active" onclick="selectOS('all')">
+      <div class="device-icon">💻</div>
+      <div class="device-name">ALL</div>
+    </div>
+    <div class="device-card" onclick="selectOS('android')">
+      <div class="device-icon">📱</div>
+      <div class="device-name">ANDROID</div>
+    </div>
+    <div class="device-card" onclick="selectOS('ios')">
+      <div class="device-icon">🍎</div>
+      <div class="device-name">IPHONE</div>
+    </div>
+    <div class="device-card" onclick="selectOS('windows')">
+      <div class="device-icon">🪟</div>
+      <div class="device-name">WINDOWS</div>
+    </div>
+    <div class="device-card" onclick="selectOS('mac')">
+      <div class="device-icon">🖥️</div>
+      <div class="device-name">MACOS</div>
+    </div>
+  </div>
 
-  <div class="result-box">
-    <strong>Result:</strong>
-    <p id="output" style="margin-top: 8px; color: #66fcf1;">Generate বাটনে ক্লিক করুন...</p>
+  <div class="section-title">BROWSERS</div>
+  <div class="btn-grid">
+    <div class="option-btn active"><span>🌐</span> All</div>
+    <div class="option-btn"><span>🌐</span> Chrome</div>
+    <div class="option-btn"><span>🦊</span> Firefox</div>
+    <div class="option-btn"><span>🧭</span> Safari</div>
+    <div class="option-btn"><span>🌀</span> Edge</div>
+    <div class="option-btn"><span>⭕</span> Opera</div>
+  </div>
+
+  <div class="section-title">IN-APP BROWSERS</div>
+  <div class="btn-grid">
+    <div class="option-btn active"><span>📱</span> All</div>
+    <div class="option-btn"><span>📘</span> Facebook</div>
+    <div class="option-btn"><span>📷</span> Instagram</div>
+    <div class="option-btn"><span>🎵</span> TikTok</div>
+    <div class="option-btn"><span>👻</span> Snapchat</div>
+    <div class="option-btn"><span>🕸️</span> WebView</div>
+  </div>
+
+  <div class="section-title">COUNTRY / LANGUAGE REGION</div>
+  <input type="text" class="search-input" placeholder="Search 195 countries...">
+
+  <div class="slider-container">
+    <div class="slider-header">
+      <span>QUANTITY (MAX 100)</span>
+      <span id="quantity-val" style="color: #ec4899; font-weight: bold;">10</span>
+    </div>
+    <input type="range" class="slider" min="1" max="100" value="10" id="quantity" oninput="document.getElementById('quantity-val').innerText = this.value">
+  </div>
+
+  <button class="submit-btn" onclick="generateUserAgents()">► Get User Agents</button>
+
+  <div class="results-container">
+    <div class="section-title" style="margin-bottom: 12px;">RESULTS</div>
+    <div id="results-list">
+      <div style="text-align: center; font-size: 11px; color: #4b5563; padding: 20px 0;">Select parameters & fetch UAs</div>
+    </div>
   </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+  let selectedOS = 'all';
+
+  const uaList = {
+    android: [
+      "Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.6076.192 Mobile Safari/537.36",
+      "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Mobile Safari/537.36",
+      "Mozilla/5.0 (Linux; Android 12; Redmi Note 11) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6533.103 Mobile Safari/537.36"
+    ],
+    ios: [
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/126.0.6478.108 Mobile/15E148 Safari/604.1"
+    ],
+    windows: [
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0"
+    ],
+    mac: [
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15"
+    ]
+  };
+
+  function selectOS(os) {
+    selectedOS = os;
+    document.querySelectorAll('.device-card').forEach(card => card.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  function generateUserAgents() {
+    const qty = document.getElementById('quantity').value;
+    const resultsContainer = document.getElementById('results-list');
+    resultsContainer.innerHTML = '';
+
+    let pool = [];
+    if (selectedOS === 'all') {
+      pool = [...uaList.android, ...uaList.ios, ...uaList.windows, ...uaList.mac];
+    } else {
+      pool = uaList[selectedOS] || uaList.android;
+    }
+
+    for (let i = 0; i < qty; i++) {
+      const randomUa = pool[Math.floor(Math.random() * pool.length)];
+      const div = document.createElement('div');
+      div.className = 'result-item';
+      div.innerHTML = `${randomUa} <button class="copy-btn" onclick="navigator.clipboard.writeText('${randomUa}')">Copy</button>`;
+      resultsContainer.appendChild(div);
+    }
+  }
+</script>
+
 </body>
 </html>
